@@ -54,7 +54,7 @@ export class Compiler {
       const tokens = this.resolveTokens(stream);
       const tokenStream = new TokenStream(tokens, stream);
       const program = Program.read(tokenStream);
-      console.log('%o', program.serialize());
+      console.log(JSON.stringify(program.serialize()));
     } catch (e) {
       if (e instanceof PositionError) {
         throw new Error(e.format());

@@ -2,9 +2,7 @@ import { LocationError } from '../core/LocationError.js';
 import type { SourceStream } from '../core/SourceStream.js';
 import type { TokenStream } from '../core/TokenStream.js';
 import { Expression } from './Expression.js';
-import { LiteralIdentifier } from './LiteralIdentifier.js';
-import { LiteralString } from './LiteralString.js';
-import { LiteralNumeric } from './LitreralNumeric.js';
+import { ExpressionComma } from './ExpressionComma.js';
 import { NeocNodeType } from './NeocNode.js';
 import { NeocTokenType, type NeocToken } from './NeocToken.js';
 import { Statement } from './Statement.js';
@@ -27,14 +25,8 @@ export class StatementExpression extends Statement {
     stream: TokenStream<NeocTokenType>,
   ): StatementExpression | undefined {
     const begin = stream.read();
-    let expr: Expression | undefined = LiteralString.read(stream);
-    if (!expr) {
-      expr = LiteralIdentifier.read(stream);
-    }
-    if (!expr) {
-      expr = LiteralNumeric.read(stream);
-    }
-    if (!expr) {
+    const expr  = ExpressionComma.read(stream);
+    if(!expr){
       return undefined;
     }
     this.skipSpace(stream);

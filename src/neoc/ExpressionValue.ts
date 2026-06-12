@@ -1,5 +1,6 @@
 import type { TokenStream } from '../core/TokenStream.js';
 import { Expression } from './Expression.js';
+import { ExpressionGroup } from './ExpressionGroup.js';
 import { LiteralIdentifier } from './LiteralIdentifier.js';
 import { LiteralString } from './LiteralString.js';
 import { LiteralNumeric } from './LitreralNumeric.js';
@@ -18,6 +19,9 @@ export class ExpressionValue extends Expression {
     }
     if (!expr) {
       expr = LiteralIdentifier.read(stream);
+    }
+    if (!expr) {
+      expr = ExpressionGroup.read(stream);
     }
     return expr;
   }
