@@ -3,8 +3,8 @@ import type { SourceStream } from './SourceStream.js';
 import type { Token } from './Token.js';
 
 export class Node<NodeType, TokenType> {
-  private _begin: Token<TokenType>;
-  private _end: Token<TokenType>;
+  private _beginToken: Token<TokenType>;
+  private _endToken: Token<TokenType>;
   private _type: NodeType;
   private _stream: SourceStream;
   protected constructor(
@@ -14,20 +14,26 @@ export class Node<NodeType, TokenType> {
     stream: SourceStream,
   ) {
     this._type = type;
-    this._begin = begin;
-    this._end = end;
+    this._beginToken = begin;
+    this._endToken = end;
     this._stream = stream;
   }
   protected getStream(): SourceStream {
     return this._stream;
+  }
+  public getBeginToken(): Token<TokenType> {
+    return this._beginToken;
+  }
+  public getEndToken(): Token<TokenType> {
+    return this._endToken;
   }
   public getType(): NodeType {
     return this._type;
   }
   public getLocation(): ILocation {
     return {
-      begin: this._begin.getLocation().begin,
-      end: this._end.getLocation().begin,
+      begin: this._beginToken.getLocation().begin,
+      end: this._endToken.getLocation().begin,
     };
   }
   public getText(): string {
