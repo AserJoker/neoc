@@ -3,6 +3,7 @@ import type { SourceStream } from '../core/SourceStream.js';
 import type { TokenStream } from '../core/TokenStream.js';
 import { Expression } from './Expression.js';
 import { ExpressionBinary } from './ExpressionBinary.js';
+import { ExpressionCondition } from './ExpressionCondition.js';
 import { NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
 
@@ -73,7 +74,7 @@ export class ExpressionAssigment extends Expression {
     }
     stream.eat();
     this.skipSpace(stream);
-    const right = ExpressionAssigment.read(stream);
+    const right = ExpressionCondition.read(stream);
     if (!right) {
       throw new PositionError(
         'Unexpected or invalid token',

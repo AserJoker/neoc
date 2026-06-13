@@ -1,13 +1,14 @@
 import { PositionError } from '../core/PositionError.js';
 import type { SourceStream } from '../core/SourceStream.js';
 import type { TokenStream } from '../core/TokenStream.js';
+import { Declaration } from './Declaration.js';
 import { Expression } from './Expression.js';
 import { ExpressionComma } from './ExpressionComma.js';
 import { ExpressionCondition } from './ExpressionCondition.js';
 import { NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
 
-export class DeclarationArray extends Expression {
+export class DeclarationArray extends Declaration {
   private _baseType: Expression;
   private _length: Expression;
   private constructor(

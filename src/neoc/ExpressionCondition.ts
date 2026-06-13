@@ -2,7 +2,7 @@ import { PositionError } from '../core/PositionError.js';
 import type { SourceStream } from '../core/SourceStream.js';
 import type { TokenStream } from '../core/TokenStream.js';
 import { Expression } from './Expression.js';
-import { ExpressionAssigment } from './ExpressionAssigment.js';
+import { ExpressionBinary } from './ExpressionBinary.js';
 import { NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
 
@@ -45,14 +45,14 @@ export class ExpressionCondition extends Expression {
   ): Expression | undefined {
     const begin = stream.read();
     const offset = stream.getOffset();
-    const condition = ExpressionAssigment.read(stream);
+    const condition = ExpressionBinary.read(stream);
     if (!condition) {
       return undefined;
     }
     this.skipSpace(stream);
     if (stream.read().getText() !== '?') {
       stream.setOffset(offset);
-      return ExpressionAssigment.read(stream);
+      return ExpressionBinary.read(stream);
     }
     stream.eat();
     this.skipSpace(stream);

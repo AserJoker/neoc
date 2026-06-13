@@ -3,12 +3,13 @@ import type { SourceStream } from '../core/SourceStream.js';
 import type { TokenStream } from '../core/TokenStream.js';
 import { CallableArgument } from './CallableArgument.js';
 import { CallableBinding } from './CallableBinding.js';
+import { Declaration } from './Declaration.js';
 import { Expression } from './Expression.js';
 import { ExpressionCondition } from './ExpressionCondition.js';
 import { NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
 
-export class DeclarationCallable extends Expression {
+export class DeclarationCallable extends Declaration {
   private _mutable: boolean;
   private _returnType: Expression;
   private _arguments: CallableArgument[];
