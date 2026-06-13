@@ -2,7 +2,7 @@ import { PositionError } from '../core/PositionError.js';
 import type { SourceStream } from '../core/SourceStream.js';
 import type { TokenStream } from '../core/TokenStream.js';
 import { Expression } from './Expression.js';
-import { ExpressionAssigment } from './ExpressionAssigment.js';
+import { ExpressionCondition } from './ExpressionCondition.js';
 import { NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
 
@@ -28,7 +28,7 @@ export class ExpressionCall extends Expression {
   }
   public override serialize(): Record<string, unknown> {
     return {
-      type: this.getType(),
+      nodeType: this.getNodeType(),
       callee: this._callee.serialize(),
       arguments: this._arguments.map((arg) => arg.serialize()),
     };
@@ -47,7 +47,7 @@ export class ExpressionCall extends Expression {
     if (stream.read().getText() !== ')') {
       while (true) {
         this.skipSpace(stream);
-        const arg = ExpressionAssigment.read(stream);
+        const arg = ExpressionCondition.read(stream);
         if (!arg) {
           throw new PositionError(
             'Unexpected or invalid token',

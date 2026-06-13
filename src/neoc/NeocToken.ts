@@ -78,6 +78,7 @@ export class NeocToken extends Token<NeocTokenType> {
     '~',
     '^',
     '!',
+    '?',
     ':',
     ';',
     ',',

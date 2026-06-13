@@ -5,15 +5,15 @@ import type { Token } from './Token.js';
 export class Node<NodeType, TokenType> {
   private _beginToken: Token<TokenType>;
   private _endToken: Token<TokenType>;
-  private _type: NodeType;
+  private _nodeType: NodeType;
   private _stream: SourceStream;
   protected constructor(
-    type: NodeType,
+    nodeType: NodeType,
     begin: Token<TokenType>,
     end: Token<TokenType>,
     stream: SourceStream,
   ) {
-    this._type = type;
+    this._nodeType = nodeType;
     this._beginToken = begin;
     this._endToken = end;
     this._stream = stream;
@@ -27,8 +27,8 @@ export class Node<NodeType, TokenType> {
   public getEndToken(): Token<TokenType> {
     return this._endToken;
   }
-  public getType(): NodeType {
-    return this._type;
+  public getNodeType(): NodeType {
+    return this._nodeType;
   }
   public getLocation(): ILocation {
     return {

@@ -49,7 +49,7 @@ export default [
       semi: ['error', 'always'],
       
       // 对象属性键不使用引号如果可能
-      'quote-props': ['error', 'as-needed'],
+			'quote-props': ['error', 'as-needed'],
     },
   },
 

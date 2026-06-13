@@ -7,11 +7,11 @@ import { NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
 
 export class ExpressionBinary extends Expression {
-  private _opt: string;
+  private _opt: NeocToken;
   private _left: Expression | undefined;
   private _right: Expression;
   private constructor(
-    opt: string,
+    opt: NeocToken,
     left: Expression | undefined,
     right: Expression,
     begin: NeocToken,
@@ -23,7 +23,7 @@ export class ExpressionBinary extends Expression {
     this._left = left;
     this._right = right;
   }
-  public getOpt(): string {
+  public getOpt(): NeocToken {
     return this._opt;
   }
   public getLeft(): Expression | undefined {
@@ -34,9 +34,10 @@ export class ExpressionBinary extends Expression {
   }
   public override serialize(): Record<string, unknown> {
     return {
-      type: this.getType(),
+      nodeType: this.getNodeType(),
       left: this._left?.serialize?.(),
       right: this._right.serialize(),
+      opt: this._opt.getText(),
     };
   }
   private static readLogicalOr(
@@ -49,8 +50,8 @@ export class ExpressionBinary extends Expression {
     }
     const offset = stream.getOffset();
     this.skipSpace(stream);
-    const opt = stream.read().getText();
-    if (opt != '||') {
+    const opt = stream.read();
+    if (opt.getText() != '||') {
       stream.setOffset(offset);
       return left;
     }
@@ -84,8 +85,8 @@ export class ExpressionBinary extends Expression {
     }
     const offset = stream.getOffset();
     this.skipSpace(stream);
-    const opt = stream.read().getText();
-    if (opt != '&&') {
+    const opt = stream.read();
+    if (opt.getText() != '&&') {
       stream.setOffset(offset);
       return left;
     }
@@ -119,8 +120,8 @@ export class ExpressionBinary extends Expression {
     }
     const offset = stream.getOffset();
     this.skipSpace(stream);
-    const opt = stream.read().getText();
-    if (opt != '|') {
+    const opt = stream.read();
+    if (opt.getText() != '|') {
       stream.setOffset(offset);
       return left;
     }
@@ -154,8 +155,8 @@ export class ExpressionBinary extends Expression {
     }
     const offset = stream.getOffset();
     this.skipSpace(stream);
-    const opt = stream.read().getText();
-    if (opt != '^') {
+    const opt = stream.read();
+    if (opt.getText() != '^') {
       stream.setOffset(offset);
       return left;
     }
@@ -189,8 +190,8 @@ export class ExpressionBinary extends Expression {
     }
     const offset = stream.getOffset();
     this.skipSpace(stream);
-    const opt = stream.read().getText();
-    if (opt != '&') {
+    const opt = stream.read();
+    if (opt.getText() != '&') {
       stream.setOffset(offset);
       return left;
     }
@@ -224,8 +225,8 @@ export class ExpressionBinary extends Expression {
     }
     const offset = stream.getOffset();
     this.skipSpace(stream);
-    const opt = stream.read().getText();
-    if (opt != '==' && opt != '!=') {
+    const opt = stream.read();
+    if (opt.getText() != '==' && opt.getText() != '!=') {
       stream.setOffset(offset);
       return left;
     }
@@ -259,8 +260,13 @@ export class ExpressionBinary extends Expression {
     }
     const offset = stream.getOffset();
     this.skipSpace(stream);
-    const opt = stream.read().getText();
-    if (opt != '>' && opt != '<' && opt != '>=' && opt != '<=') {
+    const opt = stream.read();
+    if (
+      opt.getText() != '>' &&
+      opt.getText() != '<' &&
+      opt.getText() != '>=' &&
+      opt.getText() != '<='
+    ) {
       stream.setOffset(offset);
       return left;
     }
@@ -294,8 +300,8 @@ export class ExpressionBinary extends Expression {
     }
     const offset = stream.getOffset();
     this.skipSpace(stream);
-    const opt = stream.read().getText();
-    if (opt != '>>' && opt != '<<') {
+    const opt = stream.read();
+    if (opt.getText() != '>>' && opt.getText() != '<<') {
       stream.setOffset(offset);
       return left;
     }
@@ -329,8 +335,8 @@ export class ExpressionBinary extends Expression {
     }
     const offset = stream.getOffset();
     this.skipSpace(stream);
-    const opt = stream.read().getText();
-    if (opt != '+' && opt != '-') {
+    const opt = stream.read();
+    if (opt.getText() != '+' && opt.getText() != '-') {
       stream.setOffset(offset);
       return left;
     }
@@ -364,8 +370,8 @@ export class ExpressionBinary extends Expression {
     }
     const offset = stream.getOffset();
     this.skipSpace(stream);
-    const opt = stream.read().getText();
-    if (opt != '*' && opt != '/' && opt != '%') {
+    const opt = stream.read();
+    if (opt.getText() != '*' && opt.getText() != '/' && opt.getText() != '%') {
       stream.setOffset(offset);
       return left;
     }
@@ -393,8 +399,13 @@ export class ExpressionBinary extends Expression {
     stream: TokenStream<NeocTokenType>,
   ): Expression | undefined {
     const begin = stream.read();
-    const opt = stream.read().getText();
-    if (opt !== '+' && opt !== '-' && opt !== '!' && opt !== '~') {
+    const opt = stream.read();
+    if (
+      opt.getText() !== '+' &&
+      opt.getText() !== '-' &&
+      opt.getText() !== '!' &&
+      opt.getText() !== '~'
+    ) {
       return ExpressionPost.read(stream);
     }
     stream.eat();

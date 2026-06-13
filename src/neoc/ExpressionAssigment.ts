@@ -34,7 +34,7 @@ export class ExpressionAssigment extends Expression {
   }
   public override serialize(): Record<string, unknown> {
     return {
-      type: this.getType(),
+      nodeType: this.getNodeType(),
       left: this._left.serialize(),
       opt: this._opt,
       right: this._right.serialize(),

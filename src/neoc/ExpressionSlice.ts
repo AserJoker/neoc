@@ -2,7 +2,7 @@ import { PositionError } from '../core/PositionError.js';
 import type { SourceStream } from '../core/SourceStream.js';
 import type { TokenStream } from '../core/TokenStream.js';
 import { Expression } from './Expression.js';
-import { ExpressionAssigment } from './ExpressionAssigment.js';
+import { ExpressionCondition } from './ExpressionCondition.js';
 import { NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
 
@@ -34,7 +34,7 @@ export class ExpressionSlice extends Expression {
   }
   public override serialize(): Record<string, unknown> {
     return {
-      type: this.getType(),
+      nodeType: this.getNodeType(),
       host: this._host.serialize(),
       start: this._start?.serialize?.(),
       end: this._end?.serialize?.(),
@@ -50,7 +50,7 @@ export class ExpressionSlice extends Expression {
     }
     stream.eat();
     this.skipSpace(stream);
-    const start = ExpressionAssigment.read(stream);
+    const start = ExpressionCondition.read(stream);
     this.skipSpace(stream);
     if (stream.read().getText() !== ':') {
       stream.setOffset(offset);
@@ -58,7 +58,7 @@ export class ExpressionSlice extends Expression {
     }
     stream.eat();
     this.skipSpace(stream);
-    const end = ExpressionAssigment.read(stream);
+    const end = ExpressionCondition.read(stream);
     this.skipSpace(stream);
     if (stream.read().getText() !== ']') {
       throw new PositionError(

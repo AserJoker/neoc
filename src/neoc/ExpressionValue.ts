@@ -1,4 +1,8 @@
 import type { TokenStream } from '../core/TokenStream.js';
+import { DeclarationArray } from './DeclarationArray.js';
+import { DeclarationCallable } from './DeclarationCallable.js';
+import { DeclarationPtr } from './DeclarationPtr.js';
+import { DeclarationSlice } from './DeclarationSlice.js';
 import { Expression } from './Expression.js';
 import { ExpressionGroup } from './ExpressionGroup.js';
 import { LiteralIdentifier } from './LiteralIdentifier.js';
@@ -22,6 +26,18 @@ export class ExpressionValue extends Expression {
     }
     if (!expr) {
       expr = ExpressionGroup.read(stream);
+    }
+    if (!expr) {
+      expr = DeclarationPtr.read(stream);
+    }
+    if (!expr) {
+      expr = DeclarationSlice.read(stream);
+    }
+    if (!expr) {
+      expr = DeclarationArray.read(stream);
+    }
+    if (!expr) {
+      expr = DeclarationCallable.read(stream);
     }
     return expr;
   }

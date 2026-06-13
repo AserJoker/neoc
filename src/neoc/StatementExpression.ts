@@ -25,8 +25,8 @@ export class StatementExpression extends Statement {
     stream: TokenStream<NeocTokenType>,
   ): StatementExpression | undefined {
     const begin = stream.read();
-    const expr  = ExpressionComma.read(stream);
-    if(!expr){
+    const expr = ExpressionComma.read(stream);
+    if (!expr) {
       return undefined;
     }
     this.skipSpace(stream);
@@ -42,7 +42,7 @@ export class StatementExpression extends Statement {
   }
   public override serialize(): Record<string, unknown> {
     return {
-      type: this.getType(),
+      nodeType: this.getNodeType(),
       expression: this._expression.serialize(),
     };
   }

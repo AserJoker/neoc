@@ -7,10 +7,10 @@ import { NeocTokenType, type NeocToken } from './NeocToken.js';
 
 export class ExpressionMember extends Expression {
   private _host: Expression;
-  private _field: string;
+  private _field: NeocToken;
   private constructor(
     host: Expression,
-    field: string,
+    field: NeocToken,
     begin: NeocToken,
     end: NeocToken,
     stream: SourceStream,
@@ -22,14 +22,14 @@ export class ExpressionMember extends Expression {
   public getHost(): Expression {
     return this._host;
   }
-  public getField(): string {
+  public getField(): NeocToken {
     return this._field;
   }
   public override serialize(): Record<string, unknown> {
     return {
-      type: this.getType(),
+      nodeType: this.getNodeType(),
       host: this._host.serialize(),
-      field: this._field,
+      field: this._field.getText(),
     };
   }
   public static read(
@@ -47,20 +47,19 @@ export class ExpressionMember extends Expression {
     this.skipSpace(stream);
     const field = stream.read();
     if (field.getType() !== NeocTokenType.IDENTIFIER) {
-      throw new PositionError(
-        'Unexpected or invalid token',
-        stream.getFilename(),
-        stream.read().getLocation().begin,
-      );
+      if (
+        field.getType() !== NeocTokenType.SYMBOL ||
+        (field.getText() !== '&' && field.getText() !== '*')
+      ) {
+        throw new PositionError(
+          'Unexpected or invalid token',
+          stream.getFilename(),
+          stream.read().getLocation().begin,
+        );
+      }
     }
     stream.eat();
     const end = stream.read();
-    return new ExpressionMember(
-      host,
-      field.getText(),
-      begin,
-      end,
-      stream.getSource(),
-    );
+    return new ExpressionMember(host, field, begin, end, stream.getSource());
   }
 }

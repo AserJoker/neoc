@@ -33,7 +33,7 @@ export class Program extends NeocNode {
       throw new PositionError(
         'unexpected statement',
         stream.getFilename(),
-        stream.read().getLocation().end,
+        stream.read().getLocation().begin,
       );
     }
     const end = stream.getOffset();
@@ -49,7 +49,7 @@ export class Program extends NeocNode {
   }
   public override serialize(): Record<string, unknown> {
     return {
-      type: this.getType(),
+      nodeType: this.getNodeType(),
       statements: this._statements.map((sts) => sts.serialize()),
     };
   }

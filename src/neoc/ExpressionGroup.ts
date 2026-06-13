@@ -22,7 +22,7 @@ export class ExpressionGroup extends Expression {
   }
   public override serialize(): Record<string, unknown> {
     return {
-      type: this.getType(),
+      nodeType: this.getNodeType(),
       expression: this._expression.serialize(),
     };
   }

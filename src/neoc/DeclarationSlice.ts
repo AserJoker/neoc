@@ -6,51 +6,37 @@ import { ExpressionCondition } from './ExpressionCondition.js';
 import { NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
 
-export class ExpressionComma extends Expression {
-  private _left: Expression;
-  private _right: Expression;
+export class DeclarationSlice extends Expression {
+  private _baseType: Expression;
   private constructor(
-    left: Expression,
-    right: Expression,
+    baseType: Expression,
     begin: NeocToken,
     end: NeocToken,
     stream: SourceStream,
   ) {
-    super(NeocNodeType.EXPRESSION_COMMA, begin, end, stream);
-    this._left = left;
-    this._right = right;
+    super(NeocNodeType.DECLARATION_SLICE, begin, end, stream);
+    this._baseType = baseType;
   }
-  public getLeft(): Expression {
-    return this._left;
-  }
-  public getRight(): Expression {
-    return this._right;
+  public getBaseType(): Expression {
+    return this._baseType;
   }
   public override serialize(): Record<string, unknown> {
     return {
       nodeType: this.getNodeType(),
-      left: this._left.serialize(),
-      right: this._right.serialize(),
+      baseType: this._baseType.serialize(),
     };
   }
   public static read(
     stream: TokenStream<NeocTokenType>,
   ): Expression | undefined {
     const begin = stream.read();
-    const left = ExpressionCondition.read(stream);
-    if (!left) {
+    if (stream.read().getText() !== '[]') {
       return undefined;
-    }
-    const offset = stream.getOffset();
-    this.skipSpace(stream);
-    if (stream.read().getText() !== ',') {
-      stream.setOffset(offset);
-      return left;
     }
     stream.eat();
     this.skipSpace(stream);
-    const right = ExpressionComma.read(stream);
-    if (!right) {
+    const baseType = ExpressionCondition.read(stream);
+    if (!baseType) {
       throw new PositionError(
         'Unexpected or invalid token',
         stream.getFilename(),
@@ -58,6 +44,6 @@ export class ExpressionComma extends Expression {
       );
     }
     const end = stream.read();
-    return new ExpressionComma(left, right, begin, end, stream.getSource());
+    return new DeclarationSlice(baseType, begin, end, stream.getSource());
   }
 }

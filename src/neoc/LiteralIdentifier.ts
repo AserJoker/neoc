@@ -20,7 +20,7 @@ export class LiteralIdentifier extends Literal {
   }
   public override serialize(): Record<string, unknown> {
     return {
-      type: this.getType(),
+      nodeType: this.getNodeType(),
       text: this.getText(),
     };
   }
