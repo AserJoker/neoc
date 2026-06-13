@@ -31,7 +31,14 @@ export class DeclarationSlice extends Declaration {
     stream: TokenStream<NeocTokenType>,
   ): Expression | undefined {
     const begin = stream.read();
-    if (stream.read().getText() !== '[]') {
+    const offset = stream.getOffset();
+    if (stream.read().getText() !== '[') {
+      return undefined;
+    }
+    stream.eat();
+    this.skipSpace(stream);
+    if (stream.read().getText() !== ']') {
+      stream.setOffset(offset);
       return undefined;
     }
     stream.eat();

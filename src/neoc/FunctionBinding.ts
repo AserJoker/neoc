@@ -38,6 +38,15 @@ export class FunctionBinding extends NeocNode {
   public getInitialize(): Expression | undefined {
     return this._initialize;
   }
+  public override serialize(): Record<string, unknown> {
+    return {
+      nodeType: this.getNodeType(),
+      mutable: this._mutable,
+      identifier: this._identifier,
+      type: this._type?.serialize?.(),
+      initialize: this._type?.serialize?.(),
+    };
+  }
   public static read(stream: TokenStream<NeocTokenType>): FunctionBinding {
     const begin = stream.read();
     const mutable = stream.read().getText() !== 'const';

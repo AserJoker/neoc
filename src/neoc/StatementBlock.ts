@@ -33,6 +33,7 @@ export class StatementBlock extends Statement {
       return undefined;
     }
     const begin = stream.read();
+    stream.eat();
     this.skipSpace(stream);
     const statements: Statement[] = [];
     if (stream.read().getText() !== '}') {
