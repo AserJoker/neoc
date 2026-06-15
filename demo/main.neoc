@@ -1,1 +1,4 @@
-func main(arg:const i32):void {}
+const data = .{
+  .a=1,
+  .b=2,
+};

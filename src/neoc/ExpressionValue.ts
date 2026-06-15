@@ -2,6 +2,7 @@ import type { TokenStream } from '../core/TokenStream.js';
 import { DeclarationArray } from './DeclarationArray.js';
 import { DeclarationCallable } from './DeclarationCallable.js';
 import { DeclarationFunction } from './DeclarationFunction.js';
+import { DeclarationInitializeList } from './DeclarationInitializeLIst.js';
 import { DeclarationPtr } from './DeclarationPtr.js';
 import { DeclarationSlice } from './DeclarationSlice.js';
 import { Expression } from './Expression.js';
@@ -42,6 +43,9 @@ export class ExpressionValue extends Expression {
     }
     if (!expr) {
       expr = DeclarationFunction.read(stream);
+    }
+    if (!expr) {
+      expr = DeclarationInitializeList.read(stream);
     }
     return expr;
   }
