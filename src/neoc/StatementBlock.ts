@@ -4,6 +4,7 @@ import type { TokenStream } from '../core/TokenStream.js';
 import { NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
 import { Statement } from './Statement.js';
+import { StatementDeclaration } from './StatementDeclaration.js';
 import { StatementEmpty } from './StatementEmpty.js';
 import { StatementExpression } from './StatementExpression.js';
 import { StatementFunction } from './StatementFunction.js';
@@ -54,6 +55,9 @@ export class StatementBlock extends Statement {
         }
         if (!sts) {
           sts = StatementEmpty.read(stream);
+        }
+        if (!sts) {
+          sts = StatementDeclaration.read(stream);
         }
         if (!sts) {
           throw new PositionError(

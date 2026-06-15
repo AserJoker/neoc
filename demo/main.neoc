@@ -1,3 +1,1 @@
-func[a = 123] main(args:[]str):i32 {
-  return 123;
-}
+func main(arg:const i32):void {}

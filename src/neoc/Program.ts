@@ -4,6 +4,7 @@ import type { TokenStream } from '../core/TokenStream.js';
 import { NeocNode, NeocNodeType } from './NeocNode.js';
 import { NeocToken, NeocTokenType } from './NeocToken.js';
 import type { Statement } from './Statement.js';
+import { StatementDeclaration } from './StatementDeclaration.js';
 import { StatementEmpty } from './StatementEmpty.js';
 import { StatementFunction } from './StatementFunction.js';
 
@@ -26,6 +27,9 @@ export class Program extends NeocNode {
       let sts: Statement | undefined = StatementFunction.read(stream);
       if (!sts) {
         sts = StatementEmpty.read(stream);
+      }
+      if (!sts) {
+        sts = StatementDeclaration.read(stream);
       }
       if (!sts) {
         break;

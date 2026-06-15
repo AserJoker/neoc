@@ -49,16 +49,12 @@ export class FunctionArgument extends NeocNode {
   }
   public static read(stream: TokenStream<NeocTokenType>): FunctionArgument {
     const begin = stream.read();
-    const mutable = stream.read().getText() !== 'const';
-    if (!mutable) {
-      stream.eat();
-      this.skipSpace(stream);
-    }
     const rest = stream.read().getText() === '...';
     if (rest) {
       stream.eat();
       this.skipSpace(stream);
     }
+    let mutable: boolean = true;
     let identifier: string | undefined = undefined;
     let type: Expression | undefined = undefined;
     if (stream.read().getType() === NeocTokenType.IDENTIFIER) {
@@ -74,6 +70,11 @@ export class FunctionArgument extends NeocNode {
       }
       stream.eat();
       this.skipSpace(stream);
+      mutable = stream.read().getText() !== 'const';
+      if (!mutable) {
+        stream.eat();
+        this.skipSpace(stream);
+      }
       type = ExpressionCondition.read(stream);
       if (!type) {
         throw new PositionError(
