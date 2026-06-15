@@ -5,6 +5,7 @@ import { NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
 import { Statement } from './Statement.js';
 import { StatementExpression } from './StatementExpression.js';
+import { StatementReturn } from './StatementReturn.js';
 
 export class StatementBlock extends Statement {
   private _statements: Statement[];
@@ -44,12 +45,16 @@ export class StatementBlock extends Statement {
           sts = StatementExpression.read(stream);
         }
         if (!sts) {
+          sts = StatementReturn.read(stream);
+        }
+        if (!sts) {
           throw new PositionError(
             'Unexpected or invalid token',
             stream.getFilename(),
             stream.read().getLocation().begin,
           );
         }
+        statements.push(sts);
         this.skipSpace(stream);
         if (stream.read().getText() === '}') {
           break;

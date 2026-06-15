@@ -44,7 +44,7 @@ export class FunctionBinding extends NeocNode {
       mutable: this._mutable,
       identifier: this._identifier,
       type: this._type?.serialize?.(),
-      initialize: this._type?.serialize?.(),
+      initialize: this._initialize?.serialize?.(),
     };
   }
   public static read(stream: TokenStream<NeocTokenType>): FunctionBinding {
