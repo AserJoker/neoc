@@ -1,4 +1,7 @@
-const data = .{
-  .a=1,
-  .b=2,
-};
+func main(args:[]str):void {
+  switch(data) {
+    (1)->print("1\n");
+    (2)->print("2\n");
+    (3)->print("3\n");
+  }
+}

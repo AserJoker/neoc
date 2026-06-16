@@ -4,11 +4,7 @@ import type { TokenStream } from '../core/TokenStream.js';
 import { NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
 import { Statement } from './Statement.js';
-import { StatementDeclaration } from './StatementDeclaration.js';
-import { StatementEmpty } from './StatementEmpty.js';
-import { StatementExpression } from './StatementExpression.js';
-import { StatementFunction } from './StatementFunction.js';
-import { StatementReturn } from './StatementReturn.js';
+import { readStatement } from './StatementHelper.js';
 
 export class StatementBlock extends Statement {
   private _statements: Statement[];
@@ -43,22 +39,7 @@ export class StatementBlock extends Statement {
     if (stream.read().getText() !== '}') {
       while (true) {
         this.skipSpace(stream);
-        let sts: Statement | undefined = StatementBlock.read(stream);
-        if (!sts) {
-          sts = StatementExpression.read(stream);
-        }
-        if (!sts) {
-          sts = StatementReturn.read(stream);
-        }
-        if (!sts) {
-          sts = StatementFunction.read(stream);
-        }
-        if (!sts) {
-          sts = StatementEmpty.read(stream);
-        }
-        if (!sts) {
-          sts = StatementDeclaration.read(stream);
-        }
+        let sts: Statement | undefined = readStatement(stream);
         if (!sts) {
           throw new PositionError(
             'Unexpected or invalid token',
