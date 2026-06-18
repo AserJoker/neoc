@@ -7,6 +7,7 @@ import type { Statement } from './Statement.js';
 import { StatementDeclaration } from './StatementDeclaration.js';
 import { StatementEmpty } from './StatementEmpty.js';
 import { StatementFunction } from './StatementFunction.js';
+import { StatementStruct } from './StatementStruct.js';
 
 export class Program extends NeocNode {
   private _statements: Statement[] = [];
@@ -32,9 +33,13 @@ export class Program extends NeocNode {
         sts = StatementDeclaration.read(stream);
       }
       if (!sts) {
+        sts = StatementStruct.read(stream);
+      }
+      if (!sts) {
         break;
       }
       statements.push(sts);
+      this.skipSpace(stream);
     }
     this.skipSpace(stream);
     if (stream.read().getType() != NeocTokenType.EOF) {

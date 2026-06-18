@@ -7,6 +7,7 @@ import { DeclarationPtr } from './DeclarationPtr.js';
 import { DeclarationSlice } from './DeclarationSlice.js';
 import { Expression } from './Expression.js';
 import { ExpressionGroup } from './ExpressionGroup.js';
+import { ExpressionMember } from './ExpressionMember.js';
 import { LiteralIdentifier } from './LiteralIdentifier.js';
 import { LiteralString } from './LiteralString.js';
 import { LiteralNumeric } from './LitreralNumeric.js';
@@ -46,6 +47,9 @@ export class ExpressionValue extends Expression {
     }
     if (!expr) {
       expr = DeclarationInitializeList.read(stream);
+    }
+    if (!expr) {
+      expr = ExpressionMember.read(undefined, stream);
     }
     return expr;
   }

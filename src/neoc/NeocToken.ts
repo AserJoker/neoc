@@ -224,6 +224,7 @@ export class NeocToken extends Token<NeocTokenType> {
     }
   }
   static keywords = [
+    'var',
     'defer',
     'func',
     'struct',
@@ -251,19 +252,15 @@ export class NeocToken extends Token<NeocTokenType> {
     'test',
     'register',
     'const',
-    'let',
     'mutable',
     'volatile',
     'in',
     'of',
-    'typeof',
-    'sizeof',
-    'alignof',
   ];
   public static readLiteralToken(stream: SourceStream) {
     const begin = stream.getPosition();
     const chr = stream.read();
-    if (!/^[\p{ID_Start}$_]$/u.test(chr) || chr == '_') {
+    if (!/^[\p{ID_Start}$_]$/u.test(chr) && chr !== '_') {
       return undefined;
     }
     stream.eat();
@@ -272,7 +269,7 @@ export class NeocToken extends Token<NeocTokenType> {
         break;
       }
       const chr = stream.read();
-      if (!/^[\p{ID_Continue}$_]$/u.test(chr) || chr == '_') {
+      if (!/^[\p{ID_Continue}$_]$/u.test(chr) && chr !== '_') {
         break;
       }
       stream.eat();

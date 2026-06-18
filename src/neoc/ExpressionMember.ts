@@ -6,10 +6,10 @@ import { NeocNodeType } from './NeocNode.js';
 import { NeocTokenType, type NeocToken } from './NeocToken.js';
 
 export class ExpressionMember extends Expression {
-  private _host: Expression;
+  private _host: Expression | undefined;
   private _field: NeocToken;
   private constructor(
-    host: Expression,
+    host: Expression | undefined,
     field: NeocToken,
     begin: NeocToken,
     end: NeocToken,
@@ -19,7 +19,7 @@ export class ExpressionMember extends Expression {
     this._host = host;
     this._field = field;
   }
-  public getHost(): Expression {
+  public getHost(): Expression | undefined {
     return this._host;
   }
   public getField(): NeocToken {
@@ -28,15 +28,15 @@ export class ExpressionMember extends Expression {
   public override serialize(): Record<string, unknown> {
     return {
       nodeType: this.getNodeType(),
-      host: this._host.serialize(),
+      host: this._host?.serialize?.(),
       field: this._field.getText(),
     };
   }
   public static read(
-    host: Expression,
+    host: Expression | undefined,
     stream: TokenStream<NeocTokenType>,
   ): Expression | undefined {
-    const begin = host.getBeginToken();
+    const begin = host ? host.getBeginToken() : stream.read();
     const offset = stream.getOffset();
     this.skipSpace(stream);
     if (stream.read().getText() !== '.') {

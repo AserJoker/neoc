@@ -13,6 +13,7 @@ import { StatementForeach } from './StatementForech.js';
 import { StatementFunction } from './StatementFunction.js';
 import { StatementIf } from './StatementIf.js';
 import { StatementReturn } from './StatementReturn.js';
+import { StatementStruct } from './StatementStruct.js';
 import { StatementSwitch } from './StatementSwitch.js';
 import { StatementWhile } from './StatementWhile.js';
 
@@ -53,6 +54,9 @@ export const readStatement = (stream: TokenStream<NeocTokenType>) => {
   }
   if (!sts) {
     sts = StatementFunction.read(stream);
+  }
+  if (!sts) {
+    sts = StatementStruct.read(stream);
   }
   if (!sts) {
     sts = StatementDeclaration.read(stream);

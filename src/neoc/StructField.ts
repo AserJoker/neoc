@@ -5,81 +5,52 @@ import type { Expression } from './Expression.js';
 import { ExpressionCondition } from './ExpressionCondition.js';
 import { LiteralIdentifier } from './LiteralIdentifier.js';
 import { NeocNode, NeocNodeType } from './NeocNode.js';
-import { NeocTokenType, type NeocToken } from './NeocToken.js';
+import type { NeocToken, NeocTokenType } from './NeocToken.js';
 
-export class VariableDeclarator extends NeocNode {
+export class StructField extends NeocNode {
   private _identifier: LiteralIdentifier;
-  private _type: Expression | undefined;
-  private _initialzie: Expression;
   private _mutable: boolean;
+  private _type: Expression;
   private constructor(
-    mutable: boolean,
     identifier: LiteralIdentifier,
-    type: Expression | undefined,
-    initialize: Expression,
+    mutable: boolean,
+    type: Expression,
     begin: NeocToken,
     end: NeocToken,
     stream: SourceStream,
   ) {
-    super(NeocNodeType.VARIABLE_DECLARATOR, begin, end, stream);
+    super(NeocNodeType.STRUCT_FIELD, begin, end, stream);
     this._identifier = identifier;
-    this._type = type;
-    this._initialzie = initialize;
     this._mutable = mutable;
+    this._type = type;
   }
   public getIdentifier(): LiteralIdentifier {
     return this._identifier;
   }
-  public getType(): Expression | undefined {
-    return this._type;
-  }
-  public getInitialzie(): Expression {
-    return this._initialzie;
-  }
   public isMutable(): boolean {
     return this._mutable;
+  }
+  public getType(): Expression {
+    return this._type;
   }
   public override serialize(): Record<string, unknown> {
     return {
       nodeType: this.getNodeType(),
       identifier: this._identifier.serialize(),
-      type: this._type?.serialize?.(),
-      initialize: this._initialzie.serialize(),
       mutable: this._mutable,
+      type: this._type.serialize(),
     };
   }
-  public static read(stream: TokenStream<NeocTokenType>): VariableDeclarator {
+  public static read(
+    stream: TokenStream<NeocTokenType>,
+  ): StructField | undefined {
     const begin = stream.read();
     const identifier = LiteralIdentifier.read(stream);
     if (!identifier) {
-      throw new PositionError(
-        'Unexpected or invalid token',
-        stream.getFilename(),
-        stream.read().getLocation().begin,
-      );
+      return undefined;
     }
     this.skipSpace(stream);
-    let type: Expression | undefined = undefined;
-    let mutable: boolean = true;
-    if (stream.read().getText() === ':') {
-      stream.eat();
-      this.skipSpace(stream);
-      if (stream.read().getText() === 'const') {
-        mutable = false;
-        stream.eat();
-        this.skipSpace(stream);
-      }
-      type = ExpressionCondition.read(stream);
-      if (!type && mutable) {
-        throw new PositionError(
-          'Unexpected or invalid token',
-          stream.getFilename(),
-          stream.read().getLocation().begin,
-        );
-      }
-      this.skipSpace(stream);
-    }
-    if (stream.read().getText() !== '=') {
+    if (stream.read().getText() !== ':') {
       throw new PositionError(
         'Unexpected or invalid token',
         stream.getFilename(),
@@ -88,20 +59,33 @@ export class VariableDeclarator extends NeocNode {
     }
     stream.eat();
     this.skipSpace(stream);
-    const initialize = ExpressionCondition.read(stream);
-    if (!initialize) {
+    const mutable = stream.read().getText() !== 'const';
+    if (!mutable) {
+      stream.eat();
+      this.skipSpace(stream);
+    }
+    const type = ExpressionCondition.read(stream);
+    if (!type) {
       throw new PositionError(
         'Unexpected or invalid token',
         stream.getFilename(),
         stream.read().getLocation().begin,
       );
     }
+    this.skipSpace(stream);
+    if (stream.read().getText() !== ';') {
+      throw new PositionError(
+        'Unexpected or invalid token',
+        stream.getFilename(),
+        stream.read().getLocation().begin,
+      );
+    }
+    stream.eat();
     const end = stream.read();
-    return new VariableDeclarator(
-      mutable,
+    return new StructField(
       identifier,
+      mutable,
       type,
-      initialize,
       begin,
       end,
       stream.getSource(),

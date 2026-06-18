@@ -40,16 +40,14 @@ export class DeclarationInitializeList extends Declaration {
       return undefined;
     }
     const begin = stream.read();
+    const offset = stream.getOffset();
     stream.eat();
     this.skipSpace(stream);
     const type = ExpressionCondition.read(stream);
     this.skipSpace(stream);
     if (stream.read().getText() !== '{') {
-      throw new PositionError(
-        'Unexpected or invalid token',
-        stream.getFilename(),
-        stream.read().getLocation().begin,
-      );
+      stream.setOffset(offset);
+      return undefined;
     }
     stream.eat();
     this.skipSpace(stream);

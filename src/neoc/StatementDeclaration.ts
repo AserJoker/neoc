@@ -8,11 +8,9 @@ import { VariableDeclarator } from './VariableDeclarator.js';
 
 export class StatementDeclaration extends Statement {
   private _pub: boolean;
-  private _mutable: boolean;
   private _declarators: VariableDeclarator[];
   private constructor(
     pub: boolean,
-    mutable: boolean,
     declarators: VariableDeclarator[],
     begin: NeocToken,
     end: NeocToken,
@@ -20,14 +18,10 @@ export class StatementDeclaration extends Statement {
   ) {
     super(NeocNodeType.STATEMENT_DECLARATION, begin, end, stream);
     this._pub = pub;
-    this._mutable = mutable;
     this._declarators = declarators;
   }
   public isPub(): boolean {
     return this._pub;
-  }
-  public isMutable(): boolean {
-    return this._mutable;
   }
   public getDeclarators(): VariableDeclarator[] {
     return this._declarators;
@@ -36,7 +30,6 @@ export class StatementDeclaration extends Statement {
     return {
       nodeType: this.getNodeType(),
       pub: this._pub,
-      mutable: this._mutable,
       declarators: this._declarators.map((dec) => dec.serialize()),
     };
   }
@@ -50,11 +43,7 @@ export class StatementDeclaration extends Statement {
       stream.eat();
       this.skipSpace(stream);
     }
-    const mutable = stream.read().getText() === 'let';
-    if (
-      stream.read().getText() === 'const' ||
-      stream.read().getText() === 'let'
-    ) {
+    if (stream.read().getText() === 'var') {
       stream.eat();
       this.skipSpace(stream);
     } else {
@@ -83,7 +72,6 @@ export class StatementDeclaration extends Statement {
     const end = stream.read();
     return new StatementDeclaration(
       pub,
-      mutable,
       declarators,
       begin,
       end,

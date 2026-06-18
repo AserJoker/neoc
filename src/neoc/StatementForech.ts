@@ -3,6 +3,7 @@ import type { SourceStream } from '../core/SourceStream.js';
 import type { TokenStream } from '../core/TokenStream.js';
 import type { Expression } from './Expression.js';
 import { ExpressionComma } from './ExpressionComma.js';
+import { ExpressionCondition } from './ExpressionCondition.js';
 import { LiteralIdentifier } from './LiteralIdentifier.js';
 import { NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
@@ -11,12 +12,14 @@ import { readStatement } from './StatementHelper.js';
 
 export class StatementForeach extends Statement {
   private _mutable: boolean;
+  private _type: Expression | undefined;
   private _idntifier: LiteralIdentifier;
   private _kind: 'of' | 'in';
   private _expression: Expression;
   private _body: Statement;
   private constructor(
     mutable: boolean,
+    type: Expression | undefined,
     identifier: LiteralIdentifier,
     kind: 'of' | 'in',
     expression: Expression,
@@ -27,6 +30,7 @@ export class StatementForeach extends Statement {
   ) {
     super(NeocNodeType.STATEMENT_FOREACH, begin, end, stream);
     this._mutable = mutable;
+    this._type = type;
     this._idntifier = identifier;
     this._kind = kind;
     this._expression = expression;
@@ -34,6 +38,9 @@ export class StatementForeach extends Statement {
   }
   public isMutable(): boolean {
     return this._mutable;
+  }
+  public getType(): Expression | undefined {
+    return this._type;
   }
   public getIdentifier(): LiteralIdentifier {
     return this._idntifier;
@@ -51,6 +58,7 @@ export class StatementForeach extends Statement {
     return {
       nodeType: this.getNodeType(),
       mutable: this._mutable,
+      type: this._type?.serialize?.(),
       identifier: this._idntifier.serialize(),
       kind: this._kind,
       expression: this._expression.serialize(),
@@ -73,11 +81,7 @@ export class StatementForeach extends Statement {
     }
     stream.eat();
     this.skipSpace(stream);
-    const mutable = stream.read().getText() === 'let';
-    if (
-      stream.read().getText() !== 'const' &&
-      stream.read().getText() !== 'let'
-    ) {
+    if (stream.read().getText() !== 'var') {
       throw new PositionError(
         'Unexpected or invalid token',
         stream.getFilename(),
@@ -96,6 +100,26 @@ export class StatementForeach extends Statement {
       );
     }
     this.skipSpace(stream);
+    let type: Expression | undefined = undefined;
+    let mutable: boolean = true;
+    if (stream.read().getText() === ':') {
+      stream.eat();
+      this.skipSpace(stream);
+      if (stream.read().getText() === 'const') {
+        mutable = false;
+        stream.eat();
+        this.skipSpace(stream);
+      }
+      type = ExpressionCondition.read(stream);
+      if (!type && mutable) {
+        throw new PositionError(
+          'Unexpected or invalid token',
+          stream.getFilename(),
+          stream.read().getLocation().begin,
+        );
+      }
+      this.skipSpace(stream);
+    }
     const kind = stream.read().getText() === 'in' ? 'in' : 'of';
     if (stream.read().getText() !== 'in' && stream.read().getText() !== 'of') {
       throw new PositionError(
@@ -135,6 +159,7 @@ export class StatementForeach extends Statement {
     const end = stream.read();
     return new StatementForeach(
       mutable,
+      type,
       identifier,
       kind,
       expression,
