@@ -6,6 +6,7 @@ import { LiteralIdentifier } from './LiteralIdentifier.js';
 import { NeocNodeType, type NeocNode } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
 import { StatementDeclaration } from './StatementDeclaration.js';
+import { StatementExpression } from './StatementExpression.js';
 import { StatementFunction } from './StatementFunction.js';
 import { StatementStruct } from './StatementStruct.js';
 import { StructField } from './StructField.js';
@@ -13,9 +14,11 @@ import { StructField } from './StructField.js';
 export class DeclarationStruct extends Declaration {
   private _identifier: LiteralIdentifier | undefined;
   private _fields: NeocNode[] | undefined;
+  private _kind: string;
   private constructor(
     identifier: LiteralIdentifier | undefined,
     fields: NeocNode[] | undefined,
+    kind: string,
     begin: NeocToken,
     end: NeocToken,
     stream: SourceStream,
@@ -23,6 +26,7 @@ export class DeclarationStruct extends Declaration {
     super(NeocNodeType.DECLARATION_STRUCT, begin, end, stream);
     this._identifier = identifier;
     this._fields = fields;
+    this._kind = kind;
   }
   public getIdentifier(): LiteralIdentifier | undefined {
     return this._identifier;
@@ -30,17 +34,25 @@ export class DeclarationStruct extends Declaration {
   public getFields(): NeocNode[] | undefined {
     return this._fields;
   }
+  public getKind(): string {
+    return this._kind;
+  }
   public override serialize(): Record<string, unknown> {
     return {
       nodeType: this.getNodeType(),
       identifier: this._identifier?.serialize?.(),
       fields: this._fields?.map((f) => f.serialize()),
+      kind: this._kind,
     };
   }
   public static read(stream: TokenStream<NeocTokenType>) {
-    if (stream.read().getText() !== 'struct') {
+    if (
+      stream.read().getText() !== 'struct' &&
+      stream.read().getText() !== 'union'
+    ) {
       return undefined;
     }
+    const kind = stream.read().getText();
     const begin = stream.read();
     stream.eat();
     this.skipSpace(stream);
@@ -65,6 +77,9 @@ export class DeclarationStruct extends Declaration {
           }
           if (!field) {
             field = StatementDeclaration.read(stream);
+          }
+          if (stream.read().getText() === '...') {
+            field = StatementExpression.read(stream);
           }
           if (!field) {
             throw new PositionError(
@@ -92,6 +107,7 @@ export class DeclarationStruct extends Declaration {
     return new DeclarationStruct(
       identifier,
       fields,
+      kind,
       begin,
       end,
       stream.getSource(),

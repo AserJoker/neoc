@@ -1,3 +1,11 @@
 func main():Result{
   return .from(123);
 }
+union Header{
+  data:u32;
+  header:struct {
+    flag:u8;
+    magic:u8;
+    item:u8;
+  };
+}
