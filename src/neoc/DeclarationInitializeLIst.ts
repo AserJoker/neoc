@@ -5,15 +5,16 @@ import { Declaration } from './Declaration.js';
 import { Expression } from './Expression.js';
 import { ExpressionCondition } from './ExpressionCondition.js';
 import { InitializeListField } from './InitializeListField.js';
-import { NeocNodeType } from './NeocNode.js';
+import { NeocNode, NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
+import { Spread } from './Spread.js';
 
 export class DeclarationInitializeList extends Declaration {
-  private _fields: Expression[];
+  private _fields: NeocNode[];
   private _type: Expression | undefined;
   private constructor(
     type: Expression | undefined,
-    fields: Expression[],
+    fields: NeocNode[],
     begin: NeocToken,
     end: NeocToken,
     stream: SourceStream,
@@ -25,7 +26,7 @@ export class DeclarationInitializeList extends Declaration {
   public getType(): Expression | undefined {
     return this._type;
   }
-  public getFields(): Expression[] {
+  public getFields(): NeocNode[] {
     return this._fields;
   }
   public override serialize(): Record<string, unknown> {
@@ -51,12 +52,15 @@ export class DeclarationInitializeList extends Declaration {
     }
     stream.eat();
     this.skipSpace(stream);
-    const fields: Expression[] = [];
+    const fields: NeocNode[] = [];
     if (stream.read().getText() !== '}') {
       while (true) {
-        let field: Expression | undefined = InitializeListField.read(stream);
+        let field: NeocNode | undefined = InitializeListField.read(stream);
         if (!field) {
           field = ExpressionCondition.read(stream);
+        }
+        if (!field) {
+          field = Spread.read(stream);
         }
         if (!field) {
           throw new PositionError(

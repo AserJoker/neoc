@@ -5,8 +5,8 @@ import { Declaration } from './Declaration.js';
 import { LiteralIdentifier } from './LiteralIdentifier.js';
 import { NeocNodeType, type NeocNode } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
+import { Spread } from './Spread.js';
 import { StatementDeclaration } from './StatementDeclaration.js';
-import { StatementExpression } from './StatementExpression.js';
 import { StatementFunction } from './StatementFunction.js';
 import { StatementStruct } from './StatementStruct.js';
 import { StructField } from './StructField.js';
@@ -79,7 +79,16 @@ export class DeclarationStruct extends Declaration {
             field = StatementDeclaration.read(stream);
           }
           if (stream.read().getText() === '...') {
-            field = StatementExpression.read(stream);
+            field = Spread.read(stream);
+            this.skipSpace(stream);
+            if (stream.read().getText() !== ';') {
+              throw new PositionError(
+                'Unexpected or invalid token',
+                stream.getFilename(),
+                stream.read().getLocation().begin,
+              );
+            }
+            stream.eat();
           }
           if (!field) {
             throw new PositionError(

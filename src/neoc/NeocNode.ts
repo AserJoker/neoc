@@ -24,7 +24,7 @@ export enum NeocNodeType {
   EXPRESSION_GROUP = 'expression_group',
   EXPRESSION_MEMBER = 'expression_member',
   EXPRESSION_SLICE = 'expression_slice',
-  EXPRESSION_SPREAD = 'expression_spread',
+  SPREAD = 'spread',
   FUNCTION_ARGUMENT = 'function_argument',
   FUNCTION_BINDING = 'function_binding',
   INITIALIZE_LIST_FIELD = 'initialize_list_field',

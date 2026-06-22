@@ -3,15 +3,16 @@ import type { SourceStream } from '../core/SourceStream.js';
 import type { TokenStream } from '../core/TokenStream.js';
 import { Expression } from './Expression.js';
 import { ExpressionCondition } from './ExpressionCondition.js';
-import { NeocNodeType } from './NeocNode.js';
+import { NeocNode, NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
+import { Spread } from './Spread.js';
 
 export class ExpressionCall extends Expression {
   private _callee: Expression;
-  private _arguments: Expression[];
+  private _arguments: NeocNode[];
   private constructor(
     callee: Expression,
-    args: Expression[],
+    args: NeocNode[],
     begin: NeocToken,
     end: NeocToken,
     stream: SourceStream,
@@ -23,7 +24,7 @@ export class ExpressionCall extends Expression {
   public getCallee(): Expression {
     return this._callee;
   }
-  public getArguments(): Expression[] {
+  public getArguments(): NeocNode[] {
     return this._arguments;
   }
   public override serialize(): Record<string, unknown> {
@@ -43,11 +44,14 @@ export class ExpressionCall extends Expression {
     }
     stream.eat();
     this.skipSpace(stream);
-    const args: Expression[] = [];
+    const args: NeocNode[] = [];
     if (stream.read().getText() !== ')') {
       while (true) {
         this.skipSpace(stream);
-        const arg = ExpressionCondition.read(stream);
+        let arg: NeocNode | undefined = ExpressionCondition.read(stream);
+        if (!arg) {
+          arg = Spread.read(stream);
+        }
         if (!arg) {
           throw new PositionError(
             'Unexpected or invalid token',
