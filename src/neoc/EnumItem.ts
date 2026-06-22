@@ -38,11 +38,7 @@ export class EnumItem extends NeocNode {
     const begin = stream.read();
     const identifier = LiteralIdentifier.read(stream);
     if (!identifier) {
-      throw new PositionError(
-        'Unexpected or invalid token',
-        stream.getFilename(),
-        stream.read().getLocation().begin,
-      );
+      return undefined;
     }
     const offset = stream.getOffset();
     this.skipSpace(stream);

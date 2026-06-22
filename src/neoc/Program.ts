@@ -6,6 +6,7 @@ import { NeocToken, NeocTokenType } from './NeocToken.js';
 import type { Statement } from './Statement.js';
 import { StatementDeclaration } from './StatementDeclaration.js';
 import { StatementEmpty } from './StatementEmpty.js';
+import { StatementEnum } from './StatementEnum.js';
 import { StatementFunction } from './StatementFunction.js';
 import { StatementStruct } from './StatementStruct.js';
 
@@ -34,6 +35,9 @@ export class Program extends NeocNode {
       }
       if (!sts) {
         sts = StatementStruct.read(stream);
+      }
+      if (!sts) {
+        sts = StatementEnum.read(stream);
       }
       if (!sts) {
         break;

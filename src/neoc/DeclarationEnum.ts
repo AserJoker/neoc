@@ -6,17 +6,18 @@ import { EnumItem } from './EnumItem.js';
 import type { Expression } from './Expression.js';
 import { ExpressionCondition } from './ExpressionCondition.js';
 import { LiteralIdentifier } from './LiteralIdentifier.js';
-import { NeocNodeType } from './NeocNode.js';
+import { NeocNode, NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
+import { Spread } from './Spread.js';
 
 export class DeclarationEnum extends Declaration {
-  private _items: EnumItem[] | undefined;
+  private _items: NeocNode[] | undefined;
   private _identifier: LiteralIdentifier;
   private _type: Expression | undefined;
   private constructor(
     identifier: LiteralIdentifier,
     type: Expression | undefined,
-    items: EnumItem[] | undefined,
+    items: NeocNode[] | undefined,
     begin: NeocToken,
     end: NeocToken,
     stream: SourceStream,
@@ -32,7 +33,7 @@ export class DeclarationEnum extends Declaration {
   public getType(): Expression | undefined {
     return this._type;
   }
-  public getItems(): EnumItem[] | undefined {
+  public getItems(): NeocNode[] | undefined {
     return this._items;
   }
   public override serialize(): Record<string, unknown> {
@@ -74,7 +75,7 @@ export class DeclarationEnum extends Declaration {
         );
       }
     }
-    let items: EnumItem[] | undefined = undefined;
+    let items: NeocNode[] | undefined = undefined;
     this.skipSpace(stream);
     if (stream.read().getText() === '{') {
       stream.eat();
@@ -82,7 +83,10 @@ export class DeclarationEnum extends Declaration {
       items = [];
       if (stream.read().getText() !== '}') {
         while (true) {
-          const item = EnumItem.read(stream);
+          let item: NeocNode | undefined = EnumItem.read(stream);
+          if (!item) {
+            item = Spread.read(stream);
+          }
           if (!item) {
             throw new PositionError(
               'Unexpected or invalid token',
