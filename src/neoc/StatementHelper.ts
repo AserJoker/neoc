@@ -7,6 +7,7 @@ import { StatementContinue } from './StatementContinue.js';
 import { StatementDeclaration } from './StatementDeclaration.js';
 import { StatementDoWhile } from './StatementDoWhile.js';
 import { StatementEmpty } from './StatementEmpty.js';
+import { StatementEnum } from './StatementEnum.js';
 import { StatementExpression } from './StatementExpression.js';
 import { StatementFor } from './StatementFor.js';
 import { StatementForeach } from './StatementForech.js';
@@ -57,6 +58,9 @@ export const readStatement = (stream: TokenStream<NeocTokenType>) => {
   }
   if (!sts) {
     sts = StatementStruct.read(stream);
+  }
+  if (!sts) {
+    sts = StatementEnum.read(stream);
   }
   if (!sts) {
     sts = StatementDeclaration.read(stream);

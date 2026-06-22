@@ -1,3 +1,3 @@
-func t(...args:infer):void{
-  create(...args);
+enum Color:uint8 {
+  Red = 123,
 }

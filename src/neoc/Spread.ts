@@ -7,7 +7,7 @@ import { NeocNode, NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
 
 export class Spread extends NeocNode {
-  expression: Expression;
+  private _expression: Expression;
   private constructor(
     expression: Expression,
     begin: NeocToken,
@@ -15,15 +15,15 @@ export class Spread extends NeocNode {
     stream: SourceStream,
   ) {
     super(NeocNodeType.SPREAD, begin, end, stream);
-    this.expression = expression;
+    this._expression = expression;
   }
   public getExpression(): Expression {
-    return this.expression;
+    return this._expression;
   }
   public override serialize(): Record<string, unknown> {
     return {
       nodeType: this.getNodeType(),
-      expression: this.expression.serialize(),
+      expression: this._expression.serialize(),
     };
   }
   public static read(stream: TokenStream<NeocTokenType>): Spread | undefined {
