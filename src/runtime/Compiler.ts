@@ -5,7 +5,7 @@ import { NeocToken, NeocTokenType } from '../neoc/NeocToken.js';
 import { PositionError } from '../core/PositionError.js';
 import { type Token } from '../core/Token.js';
 import { TokenStream } from '../core/TokenStream.js';
-import { Program } from '../neoc/Program.js';
+import { Program } from '../neoc/node/Program.js';
 export class Compiler {
   private readToken(stream: SourceStream): Token<NeocTokenType> | undefined {
     let token = NeocToken.readStringToken(stream);
