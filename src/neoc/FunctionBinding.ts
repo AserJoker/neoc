@@ -7,12 +7,10 @@ import { NeocNode, NeocNodeType } from './NeocNode.js';
 import { NeocTokenType, type NeocToken } from './NeocToken.js';
 
 export class FunctionBinding extends NeocNode {
-  private _mutable: boolean;
   private _identifier: string;
   private _type: Expression | undefined;
   private _initialize: Expression | undefined;
   private constructor(
-    mutable: boolean,
     identifier: string,
     type: Expression | undefined,
     initialize: Expression | undefined,
@@ -21,13 +19,9 @@ export class FunctionBinding extends NeocNode {
     stream: SourceStream,
   ) {
     super(NeocNodeType.FUNCTION_BINDING, begin, end, stream);
-    this._mutable = mutable;
     this._identifier = identifier;
     this._type = type;
     this._initialize = initialize;
-  }
-  public isMutable(): boolean {
-    return this._mutable;
   }
   public getIdentifier(): string {
     return this._identifier;
@@ -41,7 +35,6 @@ export class FunctionBinding extends NeocNode {
   public override serialize(): Record<string, unknown> {
     return {
       nodeType: this.getNodeType(),
-      mutable: this._mutable,
       identifier: this._identifier,
       type: this._type?.serialize?.(),
       initialize: this._initialize?.serialize?.(),
@@ -49,11 +42,6 @@ export class FunctionBinding extends NeocNode {
   }
   public static read(stream: TokenStream<NeocTokenType>): FunctionBinding {
     const begin = stream.read();
-    const mutable = stream.read().getText() !== 'const';
-    if (!mutable) {
-      stream.eat();
-      this.skipSpace(stream);
-    }
     if (stream.read().getType() !== NeocTokenType.IDENTIFIER) {
       throw new PositionError(
         'Unexpected or invalid token',
@@ -94,7 +82,6 @@ export class FunctionBinding extends NeocNode {
     }
     const end = stream.read();
     return new FunctionBinding(
-      mutable,
       identifier,
       type,
       initialize,

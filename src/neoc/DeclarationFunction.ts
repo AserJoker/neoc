@@ -16,7 +16,6 @@ export class DeclarationFunction extends Declaration {
   private _arguments: FunctionArgument[];
   private _bindings: FunctionBinding[];
   private _returnType: Expression;
-  private _mutable: boolean;
   private _body: StatementBlock | undefined;
   private constructor(
     kind: string | undefined,
@@ -24,7 +23,6 @@ export class DeclarationFunction extends Declaration {
     args: FunctionArgument[],
     bindings: FunctionBinding[],
     returnType: Expression,
-    mutable: boolean,
     body: StatementBlock | undefined,
     begin: NeocToken,
     end: NeocToken,
@@ -36,7 +34,6 @@ export class DeclarationFunction extends Declaration {
     this._arguments = args;
     this._bindings = bindings;
     this._returnType = returnType;
-    this._mutable = mutable;
     this._body = body;
   }
   public getKind(): string | undefined {
@@ -54,9 +51,7 @@ export class DeclarationFunction extends Declaration {
   public getReturnType(): Expression {
     return this._returnType;
   }
-  public isMutable(): boolean {
-    return this._mutable;
-  }
+
   public getBody(): StatementBlock | undefined {
     return this._body;
   }
@@ -68,7 +63,6 @@ export class DeclarationFunction extends Declaration {
       arguments: this._arguments.map((arg) => arg.serialize()),
       bindings: this._bindings.map((bind) => bind.serialize()),
       returnType: this._returnType.serialize(),
-      mutable: this._mutable,
       body: this._body?.serialize?.(),
     };
   }
@@ -161,11 +155,6 @@ export class DeclarationFunction extends Declaration {
     }
     stream.eat();
     this.skipSpace(stream);
-    const mutable = stream.read().getText() !== 'const';
-    if (!mutable) {
-      stream.eat();
-      this.skipSpace(stream);
-    }
     const returnType = ExpressionCondition.read(stream);
     if (!returnType) {
       throw new PositionError(
@@ -193,7 +182,6 @@ export class DeclarationFunction extends Declaration {
       args,
       bindings,
       returnType,
-      mutable,
       body,
       begin,
       end,

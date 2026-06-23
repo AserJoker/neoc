@@ -1,12 +1,14 @@
 import type { TokenStream } from '../core/TokenStream.js';
 import { DeclarationArray } from './DeclarationArray.js';
 import { DeclarationCallable } from './DeclarationCallable.js';
+import { DeclarationConst } from './DeclarationConst.js';
 import { DeclarationEnum } from './DeclarationEnum.js';
 import { DeclarationFunction } from './DeclarationFunction.js';
 import { DeclarationInitializeList } from './DeclarationInitializeLIst.js';
 import { DeclarationPtr } from './DeclarationPtr.js';
 import { DeclarationSlice } from './DeclarationSlice.js';
 import { DeclarationStruct } from './DeclarationStruct.js';
+import { DeclarationTuple } from './DeclarationTuple.js';
 import { Expression } from './Expression.js';
 import { ExpressionGroup } from './ExpressionGroup.js';
 import { ExpressionMember } from './ExpressionMember.js';
@@ -52,6 +54,12 @@ export class ExpressionValue extends Expression {
     }
     if (!expr) {
       expr = DeclarationEnum.read(stream);
+    }
+    if (!expr) {
+      expr = DeclarationTuple.read(stream);
+    }
+    if (!expr) {
+      expr = DeclarationConst.read(stream);
     }
     if (!expr) {
       expr = DeclarationInitializeList.read(stream);

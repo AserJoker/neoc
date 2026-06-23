@@ -9,11 +9,9 @@ import type { NeocToken, NeocTokenType } from './NeocToken.js';
 
 export class StructField extends NeocNode {
   private _identifier: LiteralIdentifier;
-  private _mutable: boolean;
   private _type: Expression;
   private constructor(
     identifier: LiteralIdentifier,
-    mutable: boolean,
     type: Expression,
     begin: NeocToken,
     end: NeocToken,
@@ -21,14 +19,10 @@ export class StructField extends NeocNode {
   ) {
     super(NeocNodeType.STRUCT_FIELD, begin, end, stream);
     this._identifier = identifier;
-    this._mutable = mutable;
     this._type = type;
   }
   public getIdentifier(): LiteralIdentifier {
     return this._identifier;
-  }
-  public isMutable(): boolean {
-    return this._mutable;
   }
   public getType(): Expression {
     return this._type;
@@ -37,7 +31,6 @@ export class StructField extends NeocNode {
     return {
       nodeType: this.getNodeType(),
       identifier: this._identifier.serialize(),
-      mutable: this._mutable,
       type: this._type.serialize(),
     };
   }
@@ -59,11 +52,6 @@ export class StructField extends NeocNode {
     }
     stream.eat();
     this.skipSpace(stream);
-    const mutable = stream.read().getText() !== 'const';
-    if (!mutable) {
-      stream.eat();
-      this.skipSpace(stream);
-    }
     const type = ExpressionCondition.read(stream);
     if (!type) {
       throw new PositionError(
@@ -84,7 +72,6 @@ export class StructField extends NeocNode {
     const end = stream.read();
     return new StructField(
       identifier,
-      mutable,
       type,
       begin,
       end,

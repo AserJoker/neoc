@@ -10,12 +10,10 @@ import { NeocNodeType } from './NeocNode.js';
 import type { NeocToken, NeocTokenType } from './NeocToken.js';
 
 export class DeclarationCallable extends Declaration {
-  private _mutable: boolean;
   private _returnType: Expression;
   private _arguments: CallableArgument[];
   private _bindings: CallableBinding[];
   private constructor(
-    mutable: boolean,
     returnType: Expression,
     args: CallableArgument[],
     bindings: CallableBinding[],
@@ -27,13 +25,9 @@ export class DeclarationCallable extends Declaration {
     this._returnType = returnType;
     this._arguments = args;
     this._bindings = bindings;
-    this._mutable = mutable;
   }
   public getReturnType(): Expression {
     return this._returnType;
-  }
-  public isMutable(): boolean {
-    return this._mutable;
   }
   public getArguments(): CallableArgument[] {
     return this._arguments;
@@ -44,7 +38,6 @@ export class DeclarationCallable extends Declaration {
   public override serialize(): Record<string, unknown> {
     return {
       nodeType: this.getNodeType(),
-      mutable: this._mutable,
       returnType: this._returnType.serialize(),
       arguments: this._arguments.map((arg) => arg.serialize()),
       bindings: this._bindings.map((bind) => bind.serialize()),
@@ -118,11 +111,6 @@ export class DeclarationCallable extends Declaration {
     }
     stream.eat();
     this.skipSpace(stream);
-    const mutable = stream.read().getText() !== 'const';
-    if (!mutable) {
-      stream.eat();
-      this.skipSpace(stream);
-    }
     const type = ExpressionCondition.read(stream);
     if (!type) {
       throw new PositionError(
@@ -133,7 +121,6 @@ export class DeclarationCallable extends Declaration {
     }
     const end = stream.read();
     return new DeclarationCallable(
-      mutable,
       type,
       args,
       bindings,

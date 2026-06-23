@@ -11,9 +11,7 @@ export class VariableDeclarator extends NeocNode {
   private _identifier: LiteralIdentifier;
   private _type: Expression | undefined;
   private _initialzie: Expression;
-  private _mutable: boolean;
   private constructor(
-    mutable: boolean,
     identifier: LiteralIdentifier,
     type: Expression | undefined,
     initialize: Expression,
@@ -25,7 +23,6 @@ export class VariableDeclarator extends NeocNode {
     this._identifier = identifier;
     this._type = type;
     this._initialzie = initialize;
-    this._mutable = mutable;
   }
   public getIdentifier(): LiteralIdentifier {
     return this._identifier;
@@ -36,16 +33,12 @@ export class VariableDeclarator extends NeocNode {
   public getInitialzie(): Expression {
     return this._initialzie;
   }
-  public isMutable(): boolean {
-    return this._mutable;
-  }
   public override serialize(): Record<string, unknown> {
     return {
       nodeType: this.getNodeType(),
       identifier: this._identifier.serialize(),
       type: this._type?.serialize?.(),
       initialize: this._initialzie.serialize(),
-      mutable: this._mutable,
     };
   }
   public static read(stream: TokenStream<NeocTokenType>): VariableDeclarator {
@@ -60,17 +53,11 @@ export class VariableDeclarator extends NeocNode {
     }
     this.skipSpace(stream);
     let type: Expression | undefined = undefined;
-    let mutable: boolean = true;
     if (stream.read().getText() === ':') {
       stream.eat();
       this.skipSpace(stream);
-      if (stream.read().getText() === 'const') {
-        mutable = false;
-        stream.eat();
-        this.skipSpace(stream);
-      }
       type = ExpressionCondition.read(stream);
-      if (!type && mutable) {
+      if (!type) {
         throw new PositionError(
           'Unexpected or invalid token',
           stream.getFilename(),
@@ -98,7 +85,6 @@ export class VariableDeclarator extends NeocNode {
     }
     const end = stream.read();
     return new VariableDeclarator(
-      mutable,
       identifier,
       type,
       initialize,
