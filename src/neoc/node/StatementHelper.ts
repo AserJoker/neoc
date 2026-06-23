@@ -5,6 +5,7 @@ import { StatementBlock } from './StatementBlock.js';
 import { StatementBreak } from './StatementBreak.js';
 import { StatementContinue } from './StatementContinue.js';
 import { StatementDeclaration } from './StatementDeclaration.js';
+import { StatementDefer } from './StatementDefer.js';
 import { StatementDoWhile } from './StatementDoWhile.js';
 import { StatementEmpty } from './StatementEmpty.js';
 import { StatementEnum } from './StatementEnum.js';
@@ -64,6 +65,9 @@ export const readStatement = (stream: TokenStream<NeocTokenType>) => {
   }
   if (!sts) {
     sts = StatementDeclaration.read(stream);
+  }
+  if (!sts) {
+    sts = StatementDefer.read(stream);
   }
   if (!sts) {
     sts = StatementExpression.read(stream);
