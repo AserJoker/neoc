@@ -22,6 +22,9 @@ export class ExpressionSlice extends Expression {
     this._host = host;
     this._start = start;
     this._end = end;
+    this._host.setParent(this);
+    this._start?.setParent(this);
+    this._end?.setParent(this);
   }
   public getHost(): Expression {
     return this._host;

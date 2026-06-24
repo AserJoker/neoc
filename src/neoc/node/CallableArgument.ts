@@ -22,6 +22,7 @@ export class CallableArgument extends NeocNode {
     this._type = type;
     this._mutable = mutable;
     this._rest = rest;
+    this._type?.setParent(this);
   }
   public getType(): Expression | undefined {
     return this._type;

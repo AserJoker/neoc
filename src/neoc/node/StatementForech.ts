@@ -12,7 +12,7 @@ import { readStatement } from './StatementHelper.js';
 
 export class StatementForeach extends Statement {
   private _type: Expression | undefined;
-  private _idntifier: LiteralIdentifier;
+  private _identifier: LiteralIdentifier;
   private _kind: 'of' | 'in';
   private _expression: Expression;
   private _body: Statement;
@@ -28,16 +28,20 @@ export class StatementForeach extends Statement {
   ) {
     super(NeocNodeType.STATEMENT_FOREACH, begin, end, stream);
     this._type = type;
-    this._idntifier = identifier;
+    this._identifier = identifier;
     this._kind = kind;
     this._expression = expression;
     this._body = body;
+    this._type?.setParent(this);
+    this._identifier.setParent(this);
+    this._expression.setParent(this);
+    this._body.setParent(this);
   }
   public getType(): Expression | undefined {
     return this._type;
   }
   public getIdentifier(): LiteralIdentifier {
-    return this._idntifier;
+    return this._identifier;
   }
   public getKind(): 'of' | 'in' {
     return this._kind;
@@ -52,7 +56,7 @@ export class StatementForeach extends Statement {
     return {
       nodeType: this.getNodeType(),
       type: this._type?.serialize?.(),
-      identifier: this._idntifier.serialize(),
+      identifier: this._identifier.serialize(),
       kind: this._kind,
       expression: this._expression.serialize(),
       body: this._body.serialize(),

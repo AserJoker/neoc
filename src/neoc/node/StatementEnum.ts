@@ -18,6 +18,7 @@ export class StatementEnum extends Statement {
     super(NeocNodeType.STATEMENT_ENUM, begin, end, stream);
     this._enum = _enum;
     this._pub = pub;
+    this._enum.setParent(this);
   }
   public getEnum(): DeclarationEnum {
     return this._enum;

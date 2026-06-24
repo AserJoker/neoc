@@ -26,6 +26,7 @@ export class DeclarationPtr extends Declaration {
     this._mutable = mutable;
     this._volatile = volatile;
     this._baseType = baseType;
+    this._baseType.setParent(this);
   }
   public isArray(): boolean {
     return this._array;

@@ -16,6 +16,7 @@ export class ExpressionGroup extends Expression {
   ) {
     super(NeocNodeType.EXPRESSION_GROUP, begin, end, stream);
     this._expression = expression;
+    this._expression.setParent(this);
   }
   public getExpression(): Expression {
     return this._expression;

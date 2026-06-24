@@ -33,6 +33,10 @@ export class StatementFor extends Statement {
     this._condtion = condition;
     this._after = after;
     this._body = body;
+    this._initialize.setParent(this);
+    this._condtion.setParent(this);
+    this._after?.setParent(this);
+    this._body.setParent(this);
   }
   public getInitialize():
     | StatementDeclaration

@@ -21,6 +21,8 @@ export class StatementDoWhile extends Statement {
     super(NeocNodeType.STATEMENT_DO_WHILE, begin, end, stream);
     this._condtion = condition;
     this._body = body;
+    this._condtion.setParent(this);
+    this._body.setParent(this);
   }
   public getCondtion(): Expression {
     return this._condtion;

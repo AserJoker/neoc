@@ -23,6 +23,9 @@ export class VariableDeclarator extends NeocNode {
     this._identifier = identifier;
     this._type = type;
     this._initialzie = initialize;
+    this._identifier.setParent(this);
+    this._type?.setParent(this);
+    this._initialzie.setParent(this);
   }
   public getIdentifier(): LiteralIdentifier {
     return this._identifier;

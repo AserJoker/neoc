@@ -20,6 +20,8 @@ export class ExpressionCall extends Expression {
     super(NeocNodeType.EXPRESSION_CALL, begin, end, stream);
     this._callee = callee;
     this._arguments = args;
+    this._callee.setParent(this);
+    this._arguments.forEach((arg) => arg.setParent(this));
   }
   public getCallee(): Expression {
     return this._callee;

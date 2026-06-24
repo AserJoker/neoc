@@ -22,6 +22,8 @@ export class ExpressionBinary extends Expression {
     this._opt = opt;
     this._left = left;
     this._right = right;
+    this._left?.setParent(this);
+    this._right.setParent(this);
   }
   public getOpt(): NeocToken {
     return this._opt;

@@ -21,6 +21,8 @@ export class SwitchMatch extends NeocNode {
     super(NeocNodeType.SWITCH_MATCH, begin, end, stream);
     this._conditions = conditions;
     this._body = body;
+    this._conditions.forEach((con) => con.setParent(this));
+    this._body.setParent(this);
   }
   public getConditions(): Expression[] {
     return this._conditions;

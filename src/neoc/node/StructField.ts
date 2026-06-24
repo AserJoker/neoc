@@ -20,6 +20,8 @@ export class StructField extends NeocNode {
     super(NeocNodeType.STRUCT_FIELD, begin, end, stream);
     this._identifier = identifier;
     this._type = type;
+    this._identifier.setParent(this);
+    this._type.setParent(this);
   }
   public getIdentifier(): LiteralIdentifier {
     return this._identifier;

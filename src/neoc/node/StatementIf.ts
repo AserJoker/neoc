@@ -24,6 +24,9 @@ export class StatementIf extends Statement {
     this._condition = condition;
     this._alternate = alternate;
     this._consequent = consequent;
+    this._condition.setParent(this);
+    this._alternate?.setParent(this);
+    this._consequent.setParent(this);
   }
   public getCondtion(): Expression {
     return this._condition;

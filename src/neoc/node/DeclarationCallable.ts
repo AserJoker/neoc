@@ -2,7 +2,6 @@ import { PositionError } from '../../core/PositionError.js';
 import type { SourceStream } from '../../core/SourceStream.js';
 import type { TokenStream } from '../../core/TokenStream.js';
 import { CallableArgument } from './CallableArgument.js';
-import { CallableBinding } from './CallableBinding.js';
 import { Declaration } from './Declaration.js';
 import { Expression } from './Expression.js';
 import { ExpressionCondition } from './ExpressionCondition.js';
@@ -12,11 +11,9 @@ import type { NeocToken, NeocTokenType } from '../NeocToken.js';
 export class DeclarationCallable extends Declaration {
   private _returnType: Expression;
   private _arguments: CallableArgument[];
-  private _bindings: CallableBinding[];
   private constructor(
     returnType: Expression,
     args: CallableArgument[],
-    bindings: CallableBinding[],
     begin: NeocToken,
     end: NeocToken,
     stream: SourceStream,
@@ -24,7 +21,8 @@ export class DeclarationCallable extends Declaration {
     super(NeocNodeType.DECLARATION_CALLABLE, begin, end, stream);
     this._returnType = returnType;
     this._arguments = args;
-    this._bindings = bindings;
+    this._returnType.setParent(this);
+    this._arguments.forEach((arg) => arg.setParent(this));
   }
   public getReturnType(): Expression {
     return this._returnType;
@@ -32,15 +30,11 @@ export class DeclarationCallable extends Declaration {
   public getArguments(): CallableArgument[] {
     return this._arguments;
   }
-  public getBindings(): CallableBinding[] {
-    return this._bindings;
-  }
   public override serialize(): Record<string, unknown> {
     return {
       nodeType: this.getNodeType(),
       returnType: this._returnType.serialize(),
       arguments: this._arguments.map((arg) => arg.serialize()),
-      bindings: this._bindings.map((bind) => bind.serialize()),
     };
   }
   public static read(
@@ -53,33 +47,6 @@ export class DeclarationCallable extends Declaration {
     const offset = stream.getOffset();
     stream.eat();
     this.skipSpace(stream);
-    const bindings: CallableBinding[] = [];
-    if (stream.read().getText() === '[') {
-      stream.eat();
-      this.skipSpace(stream);
-      if (stream.read().getText() !== ']') {
-        while (true) {
-          this.skipSpace(stream);
-          const binding = CallableBinding.read(stream);
-          if (!binding) {
-            stream.setOffset(offset);
-            return undefined;
-          }
-          bindings.push(binding);
-          this.skipSpace(stream);
-          if (stream.read().getText() === ',') {
-            stream.eat();
-          } else if (stream.read().getText() === ']') {
-            break;
-          } else {
-            stream.setOffset(offset);
-            return undefined;
-          }
-        }
-      }
-      stream.eat();
-      this.skipSpace(stream);
-    }
     if (stream.read().getText() !== '(') {
       stream.setOffset(offset);
       return undefined;
@@ -120,13 +87,6 @@ export class DeclarationCallable extends Declaration {
       );
     }
     const end = stream.read();
-    return new DeclarationCallable(
-      type,
-      args,
-      bindings,
-      begin,
-      end,
-      stream.getSource(),
-    );
+    return new DeclarationCallable(type, args, begin, end, stream.getSource());
   }
 }

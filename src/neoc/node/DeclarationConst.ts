@@ -17,6 +17,7 @@ export class DeclarationConst extends Declaration {
   ) {
     super(NeocNodeType.DECLARATION_CONST, begin, end, stream);
     this._baseType = baseType;
+    this._baseType.setParent(this);
   }
   public getBaseType(): Expression {
     return this._baseType;

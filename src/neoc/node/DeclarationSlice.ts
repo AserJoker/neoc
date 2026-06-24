@@ -17,6 +17,7 @@ export class DeclarationSlice extends Declaration {
   ) {
     super(NeocNodeType.DECLARATION_SLICE, begin, end, stream);
     this._baseType = baseType;
+    this._baseType.setParent(this);
   }
   public getBaseType(): Expression {
     return this._baseType;

@@ -19,6 +19,8 @@ export class ExpressionComputeMember extends Expression {
     super(NeocNodeType.EXPRESSION_COMPUTE_MEMBER, begin, end, stream);
     this._host = host;
     this._field = field;
+    this._host.setParent(this);
+    this._field.setParent(this);
   }
   public getHost(): Expression {
     return this._host;

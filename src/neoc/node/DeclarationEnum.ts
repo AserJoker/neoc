@@ -26,6 +26,8 @@ export class DeclarationEnum extends Declaration {
     this._identifier = identifier;
     this._type = type;
     this._items = items;
+    this._type?.setParent(this);
+    this._items?.forEach((item) => item.setParent(this));
   }
   public getIdentifier(): LiteralIdentifier {
     return this._identifier;

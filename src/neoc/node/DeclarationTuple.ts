@@ -17,6 +17,7 @@ export class DeclarationTuple extends Declaration {
   ) {
     super(NeocNodeType.DECLARATION_TUPLE, begin, end, stream);
     this._items = items;
+    this._items.forEach((item) => item.setParent(this));
   }
   public getItems(): NeocNode[] {
     return this._items;

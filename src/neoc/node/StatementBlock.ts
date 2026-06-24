@@ -16,6 +16,7 @@ export class StatementBlock extends Statement {
   ) {
     super(NeocNodeType.STATEMENT_BLOCK, begin, end, stream);
     this._statements = statements;
+    this._statements.forEach((sts) => sts.setParent(this));
   }
   public getStatements(): Statement[] {
     return this._statements;

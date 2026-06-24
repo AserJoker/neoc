@@ -35,6 +35,10 @@ export class DeclarationFunction extends Declaration {
     this._bindings = bindings;
     this._returnType = returnType;
     this._body = body;
+    this._arguments.forEach((arg) => arg.setParent(this));
+    this._bindings.forEach((bind) => bind.setParent(this));
+    this._returnType.setParent(this);
+    this._body?.setParent(this);
   }
   public getKind(): string | undefined {
     return this._kind;

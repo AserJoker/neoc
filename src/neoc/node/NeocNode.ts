@@ -4,7 +4,6 @@ import { NeocTokenType } from '../NeocToken.js';
 
 export enum NeocNodeType {
   CALLABLE_ARGUMENT = 'callable_argument',
-  CALLABLE_BINDING = 'callable_binding',
   DECLARATION_ARRAY = 'declaration_array',
   DECLARATION_CALLABLE = 'declaration_callable',
   DECLARATION_CONST = 'declaration_const',

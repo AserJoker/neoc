@@ -17,6 +17,7 @@ export class StatementExpression extends Statement {
   ) {
     super(NeocNodeType.STATEMENT_EXPRESSION, begin, end, stream);
     this._expression = expression;
+    this._expression.setParent(this);
   }
   public getExpression(): Expression {
     return this._expression;

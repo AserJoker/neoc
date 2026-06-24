@@ -20,6 +20,8 @@ export class InitializeListField extends NeocNode {
     super(NeocNodeType.INITIALIZE_LIST_FIELD, begin, end, stream);
     this._identifier = identifier;
     this._initialize = initialize;
+    this._identifier.setParent(this);
+    this._initialize.setParent(this);
   }
   public getIdentifier(): LiteralIdentifier {
     return this._identifier;

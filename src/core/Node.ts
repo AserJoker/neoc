@@ -7,6 +7,7 @@ export class Node<NodeType, TokenType> {
   private _endToken: Token<TokenType>;
   private _nodeType: NodeType;
   private _stream: SourceStream;
+  private _parent: Node<NodeType, TokenType> | undefined = undefined;
   protected constructor(
     nodeType: NodeType,
     begin: Token<TokenType>,
@@ -20,6 +21,12 @@ export class Node<NodeType, TokenType> {
   }
   protected getStream(): SourceStream {
     return this._stream;
+  }
+  public setParent(parent: Node<NodeType, TokenType>) {
+    this._parent = parent;
+  }
+  public getParent(): Node<NodeType, TokenType> | undefined {
+    return this._parent;
   }
   public getBeginToken(): Token<TokenType> {
     return this._beginToken;

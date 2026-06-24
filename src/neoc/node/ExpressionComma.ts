@@ -19,6 +19,8 @@ export class ExpressionComma extends Expression {
     super(NeocNodeType.EXPRESSION_COMMA, begin, end, stream);
     this._left = left;
     this._right = right;
+    this._left.setParent(this);
+    this._right.setParent(this);
   }
   public getLeft(): Expression {
     return this._left;

@@ -22,6 +22,7 @@ export class FunctionArgument extends NeocNode {
     this._identifier = identifier;
     this._type = type;
     this._rest = rest;
+    this._type?.setParent(this);
   }
   public getIdentifier(): string | undefined {
     return this._identifier;

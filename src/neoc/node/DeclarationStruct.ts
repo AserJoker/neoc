@@ -27,6 +27,8 @@ export class DeclarationStruct extends Declaration {
     this._identifier = identifier;
     this._fields = fields;
     this._kind = kind;
+    this._identifier?.setParent(this);
+    this._fields?.forEach((field) => field.setParent(this));
   }
   public getIdentifier(): LiteralIdentifier | undefined {
     return this._identifier;

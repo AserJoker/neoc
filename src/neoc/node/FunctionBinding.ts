@@ -22,6 +22,8 @@ export class FunctionBinding extends NeocNode {
     this._identifier = identifier;
     this._type = type;
     this._initialize = initialize;
+    this._type?.setParent(this);
+    this._initialize?.setParent(this);
   }
   public getIdentifier(): string {
     return this._identifier;

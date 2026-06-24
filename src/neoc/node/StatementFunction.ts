@@ -18,6 +18,7 @@ export class StatementFunction extends Statement {
     super(NeocNodeType.STATEMENT_FUNCTION, begin, end, stream);
     this._pub = pub;
     this._declaration = declaration;
+    this._declaration.setParent(this);
   }
   public getDeclaration(): DeclarationFunction {
     return this._declaration;

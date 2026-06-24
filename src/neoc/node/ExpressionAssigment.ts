@@ -23,6 +23,8 @@ export class ExpressionAssigment extends Expression {
     this._opt = opt;
     this._left = left;
     this._right = right;
+    this._left.setParent(this);
+    this._right.setParent(this);
   }
   public getOpt(): string {
     return this._opt;

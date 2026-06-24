@@ -20,6 +20,8 @@ export class StatementDefer extends Statement {
     super(NeocNodeType.STATEMENT_DEFER, begin, end, stream);
     this._bindings = bindings;
     this._body = body;
+    this._bindings.forEach((bind) => bind.setParent(this));
+    this._body.setParent(this);
   }
   public getBindings(): FunctionBinding[] {
     return this._bindings;

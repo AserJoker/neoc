@@ -20,6 +20,7 @@ export class Program extends NeocNode {
   ) {
     super(NeocNodeType.PROGRAM, begin, end, stream);
     this._statements = statements;
+    this._statements.forEach((sts) => sts.setParent(this));
   }
   public static read(stream: TokenStream<NeocTokenType>) {
     const begin = stream.getOffset();

@@ -21,6 +21,8 @@ export class DeclarationArray extends Declaration {
     super(NeocNodeType.DECLARATION_ARRAY, begin, end, stream);
     this._baseType = baseType;
     this._length = length;
+    this._baseType.setParent(this);
+    this._length.setParent(this);
   }
   public getBaseType(): Expression {
     return this._baseType;

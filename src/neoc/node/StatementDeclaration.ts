@@ -19,6 +19,7 @@ export class StatementDeclaration extends Statement {
     super(NeocNodeType.STATEMENT_DECLARATION, begin, end, stream);
     this._pub = pub;
     this._declarators = declarators;
+    this._declarators.forEach((declar) => declar.setParent(this));
   }
   public isPub(): boolean {
     return this._pub;

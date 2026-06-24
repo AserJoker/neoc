@@ -28,6 +28,8 @@ export class StatementSwitch extends Statement {
     super(NeocNodeType.STATEMENT_SWITCH, begin, end, stream);
     this._condition = condition;
     this._matchs = maches;
+    this._condition.setParent(this);
+    this._matchs.forEach((mat) => mat.setParent(this));
   }
   public getCondtion(): Expression {
     return this._condition;

@@ -18,6 +18,7 @@ export class StatementStruct extends Statement {
     super(NeocNodeType.STATEMENT_STRUCT, begin, end, stream);
     this._struct = struct;
     this._pub = pub;
+    this._struct.setParent(this);
   }
   public getStruct(): DeclarationStruct {
     return this._struct;

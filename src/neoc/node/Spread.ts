@@ -16,6 +16,7 @@ export class Spread extends NeocNode {
   ) {
     super(NeocNodeType.SPREAD, begin, end, stream);
     this._expression = expression;
+    this._expression.setParent(this);
   }
   public getExpression(): Expression {
     return this._expression;

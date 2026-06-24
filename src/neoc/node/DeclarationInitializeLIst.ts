@@ -22,6 +22,8 @@ export class DeclarationInitializeList extends Declaration {
     super(NeocNodeType.DECLARATION_INITIALIZE_LIST, begin, end, stream);
     this._type = type;
     this._fields = fields;
+    this._type?.setParent(this);
+    this._fields.forEach((field) => field.setParent(this));
   }
   public getType(): Expression | undefined {
     return this._type;
